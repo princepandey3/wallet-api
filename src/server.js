@@ -3,10 +3,16 @@ import dotenv from "dotenv";
 import { initDB } from "./config/db.js";
 import rateLimiter from "./middleware/rateLimiter.js";
 import transactionRoute from "./routes/transactionsRoute.js";
-
+import job from "./config/crone.js";
 dotenv.config();
 
 const app = express();
+
+if (process.env.NODE_ENV === "production") job.start();
+
+app.get("/api/health", (req, res) => {
+  res.status(200).json({ status: "ok" });
+});
 
 //middlewares
 app.use(rateLimiter);
